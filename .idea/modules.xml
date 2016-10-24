@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/client.iml" filepath="$PROJECT_DIR$/.idea/modules/client/client.iml" group="client" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/client_main.iml" filepath="$PROJECT_DIR$/.idea/modules/client/client_main.iml" group="client" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/client_test.iml" filepath="$PROJECT_DIR$/.idea/modules/client/client_test.iml" group="client" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/rmi/rmi.iml" filepath="$PROJECT_DIR$/.idea/modules/rmi/rmi.iml" group="rmi" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/rmi-chat-room.iml" filepath="$PROJECT_DIR$/.idea/modules/rmi-chat-room.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/rmi-chat-room_main.iml" filepath="$PROJECT_DIR$/.idea/modules/rmi-chat-room_main.iml" group="rmi-chat-room" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/rmi-chat-room_test.iml" filepath="$PROJECT_DIR$/.idea/modules/rmi-chat-room_test.iml" group="rmi-chat-room" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/rmi/rmi_main.iml" filepath="$PROJECT_DIR$/.idea/modules/rmi/rmi_main.iml" group="rmi" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/rmi/rmi_test.iml" filepath="$PROJECT_DIR$/.idea/modules/rmi/rmi_test.iml" group="rmi" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server/server.iml" filepath="$PROJECT_DIR$/.idea/modules/server/server.iml" group="server" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server/server_main.iml" filepath="$PROJECT_DIR$/.idea/modules/server/server_main.iml" group="server" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server/server_test.iml" filepath="$PROJECT_DIR$/.idea/modules/server/server_test.iml" group="server" />
+    </modules>
+  </component>
+</project>

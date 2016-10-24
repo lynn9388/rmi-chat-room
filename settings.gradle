@@ -1,0 +1,5 @@
+rootProject.name = 'rmi-chat-room'
+include 'server'
+include 'client'
+include 'rmi'
+
