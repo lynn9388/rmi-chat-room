@@ -16,24 +16,31 @@
 
 package com.lynn9388.rmichatroom.server.rmi;
 
+import com.lynn9388.rmichatroom.rmi.Client;
 import com.lynn9388.rmichatroom.rmi.Conversation;
+import com.lynn9388.rmichatroom.rmi.Server;
 import com.lynn9388.rmichatroom.rmi.User;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class ServerImpl extends UnicastRemoteObject implements com.lynn9388.rmichatroom.rmi.Server {
+public class ServerImpl extends UnicastRemoteObject implements Server {
     private Map<String, User> users;
+    private Map<String, Date> lastHeartbeatTimes;
+    private Map<String, Client> onlineClients;
     private Map<String, Conversation> conversations;
 
     public ServerImpl() throws RemoteException {
-        users = new HashMap<>();
-        conversations = new HashMap<>();
+        users = new ConcurrentHashMap<>();
+        lastHeartbeatTimes = new ConcurrentHashMap<>();
+        onlineClients = new ConcurrentHashMap<>();
+        conversations = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -43,6 +50,13 @@ public class ServerImpl extends UnicastRemoteObject implements com.lynn9388.rmic
         } else {
             return false;
         }
+    }
+
+    @Override
+    public boolean sendHeartbeat(String username) throws RemoteException {
+        boolean result = lastHeartbeatTimes.containsKey(username);
+        lastHeartbeatTimes.put(username, new Date());
+        return result;
     }
 
     @Override
@@ -62,5 +76,16 @@ public class ServerImpl extends UnicastRemoteObject implements com.lynn9388.rmic
 
     private String getConversationKey(String from, String to) {
         return from + " & " + to;
+    }
+
+    public void checkClientsStatus() {
+        Date now = new Date();
+        Set<Map.Entry<String, Date>> set = lastHeartbeatTimes.entrySet();
+        for (Map.Entry entry : set) {
+            if (now.getTime() - ((Date) entry.getValue()).getTime() > Server.HEARTBEAT_RATE * 10) {
+                set.remove(entry);
+                onlineClients.remove(entry.getKey());
+            }
+        }
     }
 }

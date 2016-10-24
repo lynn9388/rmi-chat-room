@@ -24,7 +24,22 @@ import java.util.List;
 public interface Server extends Remote {
     String NAME = "Server";
 
+    /**
+     * Time interval of milliseconds during each heartbeat
+     */
+    int HEARTBEAT_RATE = 3000;
+
     boolean register(User user) throws RemoteException;
+
+    /**
+     * Send heartbeat signal to keep user online
+     *
+     * @param username the name of the user
+     * @return true if the user keep online, or false when the user has been set to offline,
+     * and should register the user again
+     * @throws RemoteException
+     */
+    boolean sendHeartbeat(String username) throws RemoteException;
 
     List<User> getUsers() throws RemoteException;
 
