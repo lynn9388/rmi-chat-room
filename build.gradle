@@ -14,9 +14,6 @@ allprojects {
 }
 
 project(':rmi') {
-    apply plugin: 'application'
-
-    mainClassName = "com.lynn9388.rmichatroom.client.Client"
 
 }
 
@@ -31,6 +28,10 @@ project(':server') {
 }
 
 project(':client') {
+    apply plugin: 'application'
+
+    mainClassName = "com.lynn9388.rmichatroom.client.Client"
+
     dependencies {
         compile project(':rmi')
     }
