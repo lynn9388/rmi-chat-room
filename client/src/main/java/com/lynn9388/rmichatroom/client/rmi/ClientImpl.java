@@ -14,15 +14,26 @@
  *  limitations under the License.
  */
 
-package com.lynn9388.rmichatroom.rmi;
+package com.lynn9388.rmichatroom.client.rmi;
 
-import java.rmi.Remote;
+import com.lynn9388.rmichatroom.rmi.Client;
+
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
 import java.util.List;
 
-public interface Client extends Remote {
-    void updateUsernames(List<String> usernames) throws RemoteException;
+public class ClientImpl extends UnicastRemoteObject implements Client {
+    protected ClientImpl() throws RemoteException {
+    }
 
-    void receiveMessage(Date date, String message) throws RemoteException;
+    @Override
+    public void updateUsernames(List<String> usernames) throws RemoteException {
+
+    }
+
+    @Override
+    public void receiveMessage(Date date, String message) throws RemoteException {
+
+    }
 }
