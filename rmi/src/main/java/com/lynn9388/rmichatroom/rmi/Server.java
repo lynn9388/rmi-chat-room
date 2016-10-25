@@ -48,4 +48,8 @@ public interface Server extends Remote {
     List<String> getOnlineUsernames() throws RemoteException;
 
     void recordMessage(String from, String to, Date date, String message) throws RemoteException;
+
+    Conversation getConversation(String username) throws RemoteException;
+
+    void removeConversation(String username) throws RemoteException;
 }

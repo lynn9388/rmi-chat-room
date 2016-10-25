@@ -94,6 +94,16 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         conversation.addMessage(from, to, date, message);
     }
 
+    @Override
+    public Conversation getConversation(String username) throws RemoteException {
+        return conversations.get(username);
+    }
+
+    @Override
+    public void removeConversation(String username) throws RemoteException {
+        conversations.remove(username);
+    }
+
     /**
      * Check clients' status and update users' information for online users
      */
