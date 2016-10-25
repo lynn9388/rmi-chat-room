@@ -16,11 +16,13 @@
 
 package com.lynn9388.rmichatroom.client.gui;
 
+import com.lynn9388.rmichatroom.rmi.Message;
 import com.lynn9388.rmichatroom.rmi.User;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -28,6 +30,7 @@ import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import java.awt.Button;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Label;
@@ -35,22 +38,22 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
 public class MainGui extends JFrame implements ActionListener {
     private JTextArea historyArea;
-    private ButtonGroup chooseUser;
+    private ButtonGroup userButtonGroup;
     private JPanel chooseUserPanel;
-    private JScrollPane chooseUserScroll;
+    private JScrollPane chooseUserScrollPane;
     private JTextArea messageEditArea;
     private Button sendButton;
 
     private String username;
+    private String sendToUsername;
     private List<User> registeredUsers;
-    private List<String> onlineUsers;
+    private List<String> onlineUsernames;
 
     public MainGui(String username) {
         this.username = username;
@@ -91,11 +94,11 @@ public class MainGui extends JFrame implements ActionListener {
 
         // Area to choose user
         chooseUserPanel = new JPanel();
-        chooseUserScroll = new JScrollPane(chooseUserPanel);
-        chooseUserScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        chooseUser = new ButtonGroup();
-        chooseUserScroll.setBounds(10, 450, 100, 150);
-        contentPanel.add(chooseUserScroll);
+        chooseUserScrollPane = new JScrollPane(chooseUserPanel);
+        chooseUserScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        userButtonGroup = new ButtonGroup();
+        chooseUserScrollPane.setBounds(10, 450, 100, 150);
+        contentPanel.add(chooseUserScrollPane);
 
         // Label for message edit area
         Label messageLabel = new Label("Message:");
@@ -119,16 +122,9 @@ public class MainGui extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    /**
-     * 监听radio按钮
-     *
-     * @param e
-     */
     @Override
     public void actionPerformed(ActionEvent e) {
-        String username = e.getActionCommand();
-
-        System.out.println("点击了radio" + username);
+        sendToUsername = e.getActionCommand();
     }
 
     /**
@@ -138,34 +134,28 @@ public class MainGui extends JFrame implements ActionListener {
      */
     public void addOnlineUser(User onlineUser) {
         boolean isRegistered = false;
-        AbstractButton ab = new JRadioButton();
-        for (Enumeration<AbstractButton> e = chooseUser.getElements(); e.hasMoreElements(); ) {
-            ab = e.nextElement();
-            if (ab.getActionCommand().equals(onlineUser.getUsername())) { //已经注册了，但是不在线，只需要加上在线标志
+        AbstractButton abstractButton = null;
+        for (Enumeration<AbstractButton> e = userButtonGroup.getElements(); e.hasMoreElements(); ) {
+            abstractButton = e.nextElement();
+            if (abstractButton.getActionCommand().equals(onlineUser.getUsername())) {
                 isRegistered = true;
                 break;
             }
         }
-        if (isRegistered) { //已经注册了，但是不在线，只需要加上在线标志
-            chooseUser.remove(ab);
-            chooseUserPanel.remove(ab);
-            JRadioButton readd = new JRadioButton(onlineUser.getUsername() + "(online)");
-            chooseUser.add(readd);
-            chooseUserPanel.add(readd);
-            readd.addActionListener(this);
-            chooseUserScroll.updateUI();
-            System.out.println(onlineUser.getUsername() + "已经存在,上线了");
-            addToOnlineUserList(onlineUser.getUsername()); //添加到在线用户列表
-        } else {                      //没有注册，直接添加一个在线用户
-            JRadioButton readd = new JRadioButton(onlineUser.getUsername() + "(online)");
-            chooseUser.add(readd);
-            chooseUserPanel.add(readd);
-            readd.addActionListener(this);
-            chooseUserScroll.updateUI();
-            System.out.println("直接添加上线用户" + onlineUser.getUsername());
-            addToRegisterList(onlineUser); //之前没有注册，加入到注册list
-        }
 
+        if (isRegistered) {
+            abstractButton.setForeground(Color.GREEN);
+            chooseUserPanel.updateUI();
+            onlineUsernames.add(onlineUser.getUsername());
+        } else {
+            JRadioButton radioButton = new JRadioButton(onlineUser.getUsername(), false);
+            radioButton.setForeground(Color.GREEN);
+            radioButton.addActionListener(this);
+            userButtonGroup.add(radioButton);
+            chooseUserPanel.add(radioButton);
+            chooseUserScrollPane.updateUI();
+            registeredUsers.add(onlineUser);
+        }
     }
 
     /**
@@ -174,23 +164,21 @@ public class MainGui extends JFrame implements ActionListener {
      * @param offlineUsername the username of the user just leave
      */
     public void setUserOffline(String offlineUsername) {
-
-        for (Enumeration<AbstractButton> e = chooseUser.getElements(); e.hasMoreElements(); ) {
-            AbstractButton ab = e.nextElement();
-            if (ab.getActionCommand().equals(offlineUsername + "(online)")) {
-                //               ab.setActionCommand(offlineUsername);
-                chooseUser.remove(ab);
-                chooseUserPanel.remove(ab);
-                JRadioButton readd = new JRadioButton(offlineUsername);
-                chooseUser.add(readd);
-                chooseUserPanel.add(readd);
-                readd.addActionListener(this);
-                chooseUserScroll.updateUI();
-                System.out.println(offlineUsername + "下线了");
+        for (Enumeration<AbstractButton> e = userButtonGroup.getElements(); e.hasMoreElements(); ) {
+            AbstractButton abstractButton = e.nextElement();
+            if (abstractButton.getActionCommand().equals(offlineUsername)) {
+                abstractButton.setForeground(Color.BLACK);
+                chooseUserPanel.updateUI();
+                break;
             }
         }
-        //在onlineuser列表中删除下线的用户
-        deleteFromOnlineUserList(offlineUsername);
+
+        for (String onlineUsername : onlineUsernames) {
+            if (offlineUsername.equals(onlineUsername)) {
+                onlineUsernames.remove(onlineUsername);
+                break;
+            }
+        }
     }
 
     /**
@@ -201,39 +189,56 @@ public class MainGui extends JFrame implements ActionListener {
      */
     public void updateUsers(List<User> users, List<String> onlineUsernames) {
         registeredUsers = users;
-        onlineUsers = onlineUsernames;
-        int num = users.size();
-        List<JRadioButton> radioList = new ArrayList<>();
+        this.onlineUsernames = onlineUsernames;
         chooseUserPanel.removeAll();
         chooseUserPanel.setLayout(new GridLayout(0, 1));
-        for (int i = 0; i < num; i++) {
-            if (!users.get(i).getUsername().equals(username)) {   //用户列表不用显示用户自己
-                if (onlineUsernames.contains(users.get(i).getUsername())) {  //在线
-                    radioList.add(i, new JRadioButton(users.get(i).getUsername() + "(online)", false));
-                } else {
-                    radioList.add(i, new JRadioButton(users.get(i).getUsername(), false));
+        for (User user : users) {
+            if (!user.getUsername().equals(username)) {
+                String name = user.getUsername();
+                JRadioButton radioButton = new JRadioButton(name, false);
+                for (String onlineUsername : onlineUsernames) {
+                    if (name.equals(onlineUsername)) {
+                        radioButton.setForeground(Color.GREEN);
+                    }
                 }
-                radioList.get(i).addActionListener(this);
-                chooseUser.add(radioList.get(i));
-                chooseUserPanel.add(radioList.get(i));
+                radioButton.addActionListener(this);
+                userButtonGroup.add(radioButton);
+                chooseUserPanel.add(radioButton);
             }
         }
         chooseUserPanel.repaint();
     }
 
     /**
-     * 接收某用户在某时刻发送到的信息
-     * @param username 发送message的用户的name
-     * @param date     日期
-     * @param message  接收到的信息
+     * Show message in history area
+     * @param message the message need to be displayed
      */
-    public void appendMessage(String username, Date date, String message) {
-        historyArea.append(username + "(" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date) + ")：\n" + "      " + message + "\n\n");
+    public void appendMessage(Message message) {
+        StringBuilder builder = new StringBuilder();
+        String formatDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(message.getDate());
+        if (message.getFrom().equals(username)) {
+            builder.append("To " + message.getTo());
+        } else {
+            builder.append("From " + message.getFrom());
+        }
+        builder.append("(" + formatDate + ")：\n" + "      " + message.getContent() + "\n\n");
+        historyArea.append(builder.toString());
     }
 
     /**
-     * @param username  name of user receving message
-     * @param date      time
+     * Show message in history area
+     *
+     * @param username the username who send the message
+     * @param date     the date of the message
+     * @param message  the content of the message
+     */
+    public void appendMessage(String username, Date date, String message) {
+        appendMessage(new Message(this.username, username, date, message));
+    }
+
+    /**
+     * @param username name of user receving message
+     * @param date     time
      * @param message
      */
     public void sendMessage(String username, Date date, String message) {
@@ -241,43 +246,20 @@ public class MainGui extends JFrame implements ActionListener {
     }
 
     /**
-     *
-     * @param name 下线的用户，从在线用户列表中删除
-     */
-    public void deleteFromOnlineUserList(String name) {
-        for (int i = 0; i < onlineUsers.size(); i++) {
-            if (onlineUsers.get(i).equals(name)) {
-                onlineUsers.remove(i);
-            }
-            break;
-        }
-    }
-
-    /**
-     * @param name 上线的用户，添加到在线用户列表
-     */
-    public void addToOnlineUserList(String name) {
-        onlineUsers.add(name);
-    }
-
-    /**
-     * @param user 新注册的用户，添加到register列表
-     */
-    public void addToRegisterList(User user) {
-        registeredUsers.add(user);
-    }
-
-    /**
      * send按钮，点击事件监听
      */
     class sendActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            String message = messageEditArea.getText().toString();  //用户输入的信息
-
-            historyArea.append(" 我(" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + ")：\n" + "      " + message + "\n");
-            messageEditArea.setText("");//发送后清空输入框
-            sendMessage(username, new Date(), message);
-            System.out.println(message);
+            String message = messageEditArea.getText().toString();
+            if (!message.isEmpty()) {
+                if (sendToUsername != null && !sendToUsername.isEmpty()) {
+                    appendMessage(new Message(username, sendToUsername, new Date(), message));
+                    messageEditArea.setText("");
+                    sendMessage(username, new Date(), message);
+                } else {
+                    JOptionPane.showMessageDialog(MainGui.this, "Please choose a user to send the message.");
+                }
+            }
         }
     }
 
