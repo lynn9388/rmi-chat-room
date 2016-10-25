@@ -76,7 +76,7 @@ public class LoginGui extends JFrame implements java.awt.event.ActionListener {
             JOptionPane.showMessageDialog(this, "Username can't be empty.");
         } else {
             try {
-                ClientImpl client = new ClientImpl(username);
+                ClientImpl client = new ClientImpl();
 
                 if (client.isConnectedToServer()) {
                     dispose(); // Close login window

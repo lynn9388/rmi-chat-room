@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 
 public interface Client extends Remote {
+    int PORT = 1100;
+
     /**
      * Add a new online user
      *

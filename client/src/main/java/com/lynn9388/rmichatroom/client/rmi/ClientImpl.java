@@ -21,7 +21,6 @@ import com.lynn9388.rmichatroom.rmi.Server;
 import com.lynn9388.rmichatroom.rmi.User;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -31,18 +30,13 @@ import java.util.Date;
 import java.util.List;
 
 public class ClientImpl extends UnicastRemoteObject implements Client {
-    private static final String SERVER_IP = "";
-    private static final int SERVER_PORT = 1099;
-
     private Server server;
 
-    public ClientImpl(String username) throws RemoteException {
+    public ClientImpl() throws RemoteException {
         try {
-            Registry registry = LocateRegistry.getRegistry(SERVER_IP, SERVER_PORT);
+            Registry registry = LocateRegistry.getRegistry(Server.IP, Server.PORT);
             server = (Server) registry.lookup(Server.NAME);
             System.out.println("Bound server success!");
-
-
         } catch (NotBoundException | IOException e) {
             System.err.println("Bound server failed!");
             e.printStackTrace();
@@ -71,26 +65,5 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 
     public boolean isConnectedToServer() {
         return server != null;
-    }
-
-    /**
-     * Get the local ip address of client that could connect to server
-     *
-     * @param serverIp   the ip address of server
-     * @param serverPort the port of server
-     * @return the ip address that could connected to server
-     */
-    private String getConnectedIp(String serverIp, int serverPort) {
-        String ip = null;
-        try {
-            Socket socket = new Socket(serverIp, serverPort);
-            if (socket.isConnected()) {
-                ip = socket.getLocalAddress().getHostAddress();
-                socket.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ip;
     }
 }
