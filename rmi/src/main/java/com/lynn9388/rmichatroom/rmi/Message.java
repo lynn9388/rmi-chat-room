@@ -16,9 +16,11 @@
 
 package com.lynn9388.rmichatroom.rmi;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Message {
+public class Message implements Serializable {
+    private static final long serialVersionUID = 8223280538075990720L;
     private String from;
     private String to;
     private Date date;

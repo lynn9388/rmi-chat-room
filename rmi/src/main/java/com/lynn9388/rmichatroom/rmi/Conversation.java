@@ -16,11 +16,13 @@
 
 package com.lynn9388.rmichatroom.rmi;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Conversation {
+public class Conversation implements Serializable {
+    private static final long serialVersionUID = -4945977111134665185L;
     private List<Message> messages;
 
     public Conversation() {
