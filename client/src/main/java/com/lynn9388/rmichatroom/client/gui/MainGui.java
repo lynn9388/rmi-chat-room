@@ -16,6 +16,8 @@
 
 package com.lynn9388.rmichatroom.client.gui;
 
+import com.lynn9388.rmichatroom.rmi.User;
+
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -35,8 +37,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
+/**
+ * Created by ZhangJing on 16/10/24.
+ * <p>
+ * 客户端界面
+ */
 public class MainGui extends JFrame implements ActionListener {
-    private JPanel mainPanel;
+    private JPanel contentPane;
     private JTextArea showMessage;//信息显示区域
     private JTextArea sendMessage;//信息输入区域
     private Button send;
@@ -46,22 +54,22 @@ public class MainGui extends JFrame implements ActionListener {
 
     public void createAndShow() {
         setTitle("ChatRoom");
-        setResizable(false);
-        setBounds(100, 100, 619, 650);
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension frameSize = this.getSize();
-        setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 619, 650);
+        setResizable(false);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension frameSize = getSize();
+        setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
 
-        mainPanel = new JPanel();
-        mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        setContentPane(mainPanel);
-        mainPanel.setLayout(null);
+        contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setContentPane(contentPane);
+        contentPane.setLayout(null);
 
         //标签
         Label labelForShow = new Label("Choose User:");
         labelForShow.setBounds(10, 5, 100, 17);
-        mainPanel.add(labelForShow);
+        contentPane.add(labelForShow);
 
         //消息显示区域,自动添加滚动条
         showMessage = new JTextArea();
@@ -75,27 +83,27 @@ public class MainGui extends JFrame implements ActionListener {
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scroll.setBounds(10, 25, 595, 390);
         scroll.setViewportView(showMessage);
-        mainPanel.add(scroll);
+        contentPane.add(scroll);
 
         //标签
         Label labelForCombo = new Label("Choose User:");
         labelForCombo.setBounds(10, 425, 100, 20);
-        mainPanel.add(labelForCombo);
+        contentPane.add(labelForCombo);
 
         //选择用户
         chooseUserPanel = new JPanel();
         chooseUserScroll = new JScrollPane(chooseUserPanel);
         //设置垂直滚动条自动出现
         chooseUserScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
+        chooseUser = new ButtonGroup();
         chooseUserScroll.setBounds(10, 450, 100, 150);
         chooseUserScroll.setViewportView(chooseUserPanel);
-        mainPanel.add(chooseUserScroll);
+        contentPane.add(chooseUserScroll);
 
         //标签
         Label labelForSend = new Label("text message:");
         labelForSend.setBounds(130, 425, 100, 20);
-        mainPanel.add(labelForSend);
+        contentPane.add(labelForSend);
 
         //消息输入区
         sendMessage = new JTextArea();
@@ -108,58 +116,15 @@ public class MainGui extends JFrame implements ActionListener {
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scroll2.setBounds(130, 445, 370, 170);
         scroll2.setViewportView(sendMessage);
-        mainPanel.add(scroll2);
+        contentPane.add(scroll2);
 
         //发送按钮，默认按enter键也会发送
         send = new Button("Send");
         send.addActionListener(new sendActionListener());
         send.setBounds(520, 510, 75, 35);
-        mainPanel.add(send);
+        contentPane.add(send);
 
-        setVisible(true);
-    }
-
-    /**
-     * 更新用户列表，重绘
-     *
-     * @param usernames
-     */
-    public void updateUsernames(List<String> usernames) {
-        int num = usernames.size();
-        List<JRadioButton> radioList = new ArrayList<>();
-        chooseUserScroll.removeAll();
-        chooseUserPanel = new JPanel();
-        chooseUserScroll = new JScrollPane(chooseUserPanel);
-        chooseUserScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        chooseUserPanel.setLayout(new GridLayout(0, 1));
-        for (int i = 0; i < num; i++) {
-            radioList.add(i, new JRadioButton(usernames.get(i), false));
-            radioList.get(i).addActionListener(this);
-            chooseUserPanel.add(radioList.get(i));
-        }
-        chooseUserScroll.setBounds(10, 450, 100, 150);
-        chooseUserScroll.setViewportView(chooseUserPanel);
-        mainPanel.add(chooseUserScroll);
-        chooseUserScroll.repaint();
-    }
-
-    /**
-     * 接收用户在某时刻发送到的信息
-     *
-     * @param username 用户名
-     * @param date     日期
-     * @param message  接收到的信息
-     */
-    public void appendMessage(String username, Date date, String message) {
-        showMessage.append(username + "(" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date) + ")：\n" + "      " + message + "\n");
-    }
-
-    /**
-     * @param username
-     * @param date
-     * @param message
-     */
-    public void sendMessage(String username, Date date, String message) {
+        this.setVisible(true);
 
     }
 
@@ -171,6 +136,76 @@ public class MainGui extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         String username = e.getActionCommand();
+
+        System.out.println("点击了radio" + username);
+    }
+
+    /**
+     * Add a new online user
+     *
+     * @param onlineUser the user just online, and the user may have registered before
+     */
+    public void addOnlineUser(User onlineUser) {
+        JRadioButton addOne = new JRadioButton(onlineUser.getUsername() + "(online)");
+        addOne.addActionListener(this);
+        chooseUser.add(addOne);
+        chooseUserPanel.add(addOne);
+        chooseUserScroll.updateUI();
+    }
+
+    /**
+     * Set a user to offline
+     *
+     * @param offlineUsername the username of the user just leave
+     */
+    void setUserOffline(String offlineUsername) {
+
+
+    }
+
+    /**
+     * Update all users' information of the client
+     *
+     * @param users           all registered users
+     * @param onlineUsernames all usernames of online users
+     */
+    public void updateUsers(List<User> users, List<String> onlineUsernames) {
+        int num = users.size();
+        List<JRadioButton> radioList = new ArrayList<>();
+        chooseUserPanel.removeAll();
+        chooseUserPanel.setLayout(new GridLayout(0, 1));
+        for (int i = 0; i < num; i++) {
+            if (onlineUsernames.contains(users.get(i).getUsername())) {  //在线
+                radioList.add(i, new JRadioButton(users.get(i).getUsername() + "(online)", false));
+            } else {
+                radioList.add(i, new JRadioButton(users.get(i).getUsername(), false));
+            }
+            radioList.get(i).addActionListener(this);
+            chooseUser.add(radioList.get(i));
+            chooseUserPanel.add(radioList.get(i));
+        }
+        chooseUserPanel.repaint();
+    }
+
+    /**
+     * 接收某用户在某时刻发送到的信息
+     * @param username 发送message的用户的name
+     * @param date     日期
+     * @param message  接收到的信息
+     */
+    public void appendMessage(String username, Date date, String message) {
+
+        showMessage.append(username + "(" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date) + ")：\n" + "      " + message + "\n");
+
+    }
+
+    /**
+     * @param username  name of user receving message
+     * @param date      time
+     * @param message
+     */
+    public void sendMessage(String username, Date date, String message) {
+
     }
 
     /**
@@ -185,4 +220,5 @@ public class MainGui extends JFrame implements ActionListener {
             System.out.println(message);
         }
     }
+
 }
