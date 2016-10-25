@@ -21,7 +21,10 @@ import com.lynn9388.rmichatroom.rmi.Conversation;
 import com.lynn9388.rmichatroom.rmi.Server;
 import com.lynn9388.rmichatroom.rmi.User;
 
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,13 +34,13 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerImpl extends UnicastRemoteObject implements Server {
-    private Map<String, User> users;
+    private Map<String, User> registeredUsers;
     private Map<String, Date> lastHeartbeatTimes;
     private Map<String, Client> onlineClients;
     private Map<String, Conversation> conversations;
 
     public ServerImpl() throws RemoteException {
-        users = new ConcurrentHashMap<>();
+        registeredUsers = new ConcurrentHashMap<>();
         lastHeartbeatTimes = new ConcurrentHashMap<>();
         onlineClients = new ConcurrentHashMap<>();
         conversations = new ConcurrentHashMap<>();
@@ -45,11 +48,29 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     @Override
     public boolean register(User user) throws RemoteException {
-        if (users.put(user.getUsername(), user) == null) {
-            return true;
-        } else {
-            return false;
+        boolean result = false;
+        registeredUsers.put(user.getUsername(), user);
+        lastHeartbeatTimes.put(user.getUsername(), new Date());
+
+        try {
+            Registry registry = LocateRegistry.getRegistry(user.getIp(), user.getPort());
+            Client client = (Client) registry.lookup(user.getRemoteName());
+            onlineClients.put(user.getUsername(), client);
+        } catch (NotBoundException e) {
+            e.printStackTrace();
         }
+
+        for (Map.Entry entry : onlineClients.entrySet()) {
+            Client client = (Client) entry.getValue();
+            if (entry.getKey().equals(user.getUsername())) {
+                client.updateUsers(new ArrayList<>(registeredUsers.values()),
+                        new ArrayList<>(onlineClients.keySet()));
+            } else {
+                client.addOnlineUser(user);
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -59,9 +80,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return result;
     }
 
+    public List<User> getRegisteredUsers() throws RemoteException {
+        return new ArrayList<>(registeredUsers.values());
+    }
+
     @Override
-    public List<User> getUsers() throws RemoteException {
-        return new ArrayList<>(users.values());
+    public List<String> getOnlineUsernames() throws RemoteException {
+        return new ArrayList<>(onlineClients.keySet());
     }
 
     @Override

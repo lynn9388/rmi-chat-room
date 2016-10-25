@@ -41,7 +41,9 @@ public interface Server extends Remote {
      */
     boolean sendHeartbeat(String username) throws RemoteException;
 
-    List<User> getUsers() throws RemoteException;
+    List<User> getRegisteredUsers() throws RemoteException;
+
+    List<String> getOnlineUsernames() throws RemoteException;
 
     void recordMessage(String from, String to, Date date, String message) throws RemoteException;
 }
