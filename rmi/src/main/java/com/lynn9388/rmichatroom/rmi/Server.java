@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 
 public interface Server extends Remote {
+    String IP = "";
+    int PORT = 1099;
     String NAME = "Server";
 
     /**

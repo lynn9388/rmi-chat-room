@@ -25,20 +25,18 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Server {
-    public static final int PORT = 1099;
-
     public static void main(String[] args) {
         try {
-            com.lynn9388.rmichatroom.rmi.Server stub = new ServerImpl();
+            ServerImpl stub = new ServerImpl();
 
-            Registry registry = LocateRegistry.createRegistry(PORT);
+            Registry registry = LocateRegistry.createRegistry(com.lynn9388.rmichatroom.rmi.Server.PORT);
             registry.rebind(com.lynn9388.rmichatroom.rmi.Server.NAME, stub);
             System.out.println("Bound success!");
 
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    ((ServerImpl) stub).checkClientsStatus();
+                    stub.checkClientsStatus();
                 }
             }, 0, 10000);
         } catch (RemoteException e) {
