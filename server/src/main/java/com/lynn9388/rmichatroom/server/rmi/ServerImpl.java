@@ -55,6 +55,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             Registry registry = LocateRegistry.getRegistry(user.getIp(), user.getPort());
             Client client = (Client) registry.lookup(user.getRemoteName());
             onlineClients.put(user.getUsername(), client);
+            System.out.println("User registered:" + user.getUsername());
         } catch (NotBoundException e) {
             e.printStackTrace();
         }
@@ -73,6 +74,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public boolean sendHeartbeat(String username) throws RemoteException {
         boolean result = lastHeartbeatTimes.containsKey(username);
         lastHeartbeatTimes.put(username, new Date());
+        System.out.println("User send heartbeat signal:" + username);
         return result;
     }
 
@@ -91,6 +93,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             missedMessages.put(to, new ArrayList<>());
         }
         missedMessages.get(to).add(new Message(from, to, date, message));
+        System.out.println("Record message from " + from + " to " + to + ":" + message);
     }
 
     @Override
@@ -112,6 +115,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         for (Map.Entry entry : lastHeartbeatTimes.entrySet()) {
             if (now.getTime() - ((Date) entry.getValue()).getTime() > Server.HEARTBEAT_RATE * 10) {
                 onlineClients.remove(entry.getKey());
+                offlineUsernames.add((String) entry.getKey());
+                System.out.println("User offline:" + entry.getKey());
             }
         }
 
