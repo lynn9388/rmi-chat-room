@@ -18,6 +18,7 @@ package com.lynn9388.rmichatroom.client.gui;
 
 import com.lynn9388.rmichatroom.rmi.User;
 
+import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -35,6 +36,7 @@ import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 
 
@@ -51,6 +53,12 @@ public class MainGui extends JFrame implements ActionListener {
     private ButtonGroup chooseUser;
     private JPanel chooseUserPanel;
     private JScrollPane chooseUserScroll;
+    private String ownName;
+    private List<User> allRegisteredUsers;
+
+    public MainGui(String ownname) {
+        this.ownName = ownname;
+    }
 
     public void createAndShow() {
         setTitle("ChatRoom");
@@ -146,11 +154,33 @@ public class MainGui extends JFrame implements ActionListener {
      * @param onlineUser the user just online, and the user may have registered before
      */
     public void addOnlineUser(User onlineUser) {
-        JRadioButton addOne = new JRadioButton(onlineUser.getUsername() + "(online)");
-        addOne.addActionListener(this);
-        chooseUser.add(addOne);
-        chooseUserPanel.add(addOne);
-        chooseUserScroll.updateUI();
+        boolean isRegistered = false;
+        AbstractButton ab = new JRadioButton();
+        for (Enumeration<AbstractButton> e = chooseUser.getElements(); e.hasMoreElements(); ) {
+            ab = e.nextElement();
+            if (ab.getActionCommand().equals(onlineUser.getUsername())) { //已经注册了，但是不在线，只需要加上在线标志
+                isRegistered = true;
+                break;
+            }
+        }
+        if (isRegistered) { //已经注册了，但是不在线，只需要加上在线标志
+            chooseUser.remove(ab);
+            chooseUserPanel.remove(ab);
+            JRadioButton readd = new JRadioButton(onlineUser.getUsername() + "(online)");
+            chooseUser.add(readd);
+            chooseUserPanel.add(readd);
+            readd.addActionListener(this);
+            chooseUserScroll.updateUI();
+            System.out.println(onlineUser.getUsername() + "已经存在,上线了");
+        } else {                      //没有注册，直接添加一个在线用户
+            JRadioButton readd = new JRadioButton(onlineUser.getUsername() + "(online)");
+            chooseUser.add(readd);
+            chooseUserPanel.add(readd);
+            readd.addActionListener(this);
+            chooseUserScroll.updateUI();
+            System.out.println("直接添加上线用户" + onlineUser.getUsername());
+        }
+
     }
 
     /**
@@ -160,7 +190,20 @@ public class MainGui extends JFrame implements ActionListener {
      */
     void setUserOffline(String offlineUsername) {
 
-
+        for (Enumeration<AbstractButton> e = chooseUser.getElements(); e.hasMoreElements(); ) {
+            AbstractButton ab = e.nextElement();
+            if (ab.getActionCommand().equals(offlineUsername + "(online)")) {
+                //               ab.setActionCommand(offlineUsername);
+                chooseUser.remove(ab);
+                chooseUserPanel.remove(ab);
+                JRadioButton readd = new JRadioButton(offlineUsername);
+                chooseUser.add(readd);
+                chooseUserPanel.add(readd);
+                readd.addActionListener(this);
+                chooseUserScroll.updateUI();
+                System.out.println(offlineUsername + "下线了");
+            }
+        }
     }
 
     /**
@@ -170,19 +213,22 @@ public class MainGui extends JFrame implements ActionListener {
      * @param onlineUsernames all usernames of online users
      */
     public void updateUsers(List<User> users, List<String> onlineUsernames) {
+        allRegisteredUsers = users;
         int num = users.size();
         List<JRadioButton> radioList = new ArrayList<>();
         chooseUserPanel.removeAll();
         chooseUserPanel.setLayout(new GridLayout(0, 1));
         for (int i = 0; i < num; i++) {
-            if (onlineUsernames.contains(users.get(i).getUsername())) {  //在线
-                radioList.add(i, new JRadioButton(users.get(i).getUsername() + "(online)", false));
-            } else {
-                radioList.add(i, new JRadioButton(users.get(i).getUsername(), false));
+            if (!users.get(i).getUsername().equals(ownName)) {   //用户列表不用显示用户自己
+                if (onlineUsernames.contains(users.get(i).getUsername())) {  //在线
+                    radioList.add(i, new JRadioButton(users.get(i).getUsername() + "(online)", false));
+                } else {
+                    radioList.add(i, new JRadioButton(users.get(i).getUsername(), false));
+                }
+                radioList.get(i).addActionListener(this);
+                chooseUser.add(radioList.get(i));
+                chooseUserPanel.add(radioList.get(i));
             }
-            radioList.get(i).addActionListener(this);
-            chooseUser.add(radioList.get(i));
-            chooseUserPanel.add(radioList.get(i));
         }
         chooseUserPanel.repaint();
     }
