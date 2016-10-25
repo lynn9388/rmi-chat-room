@@ -35,6 +35,8 @@ import java.awt.Toolkit;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LoginGui extends JFrame implements java.awt.event.ActionListener {
     private JTextField userName;
@@ -97,6 +99,17 @@ public class LoginGui extends JFrame implements java.awt.event.ActionListener {
                     client.setMainGui(mainGui);
                     SwingUtilities.invokeLater(() -> mainGui.createAndShow());
                     mainGui.updateUsers(server.getRegisteredUsers(), server.getOnlineUsernames());
+
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            try {
+                                server.sendHeartbeat(username);
+                            } catch (RemoteException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                    }, 0, Server.HEARTBEAT_RATE);
                 } else {
                     JOptionPane.showMessageDialog(this, "Can't connect to server.");
                 }
