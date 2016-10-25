@@ -53,11 +53,11 @@ public class MainGui extends JFrame implements ActionListener {
     private ButtonGroup chooseUser;
     private JPanel chooseUserPanel;
     private JScrollPane chooseUserScroll;
-    private String ownName;
+    private String username;
     private List<User> allRegisteredUsers;
 
-    public MainGui(String ownname) {
-        this.ownName = ownname;
+    public MainGui(String username) {
+        this.username = username;
     }
 
     public void createAndShow() {
@@ -219,7 +219,7 @@ public class MainGui extends JFrame implements ActionListener {
         chooseUserPanel.removeAll();
         chooseUserPanel.setLayout(new GridLayout(0, 1));
         for (int i = 0; i < num; i++) {
-            if (!users.get(i).getUsername().equals(ownName)) {   //用户列表不用显示用户自己
+            if (!users.get(i).getUsername().equals(username)) {   //用户列表不用显示用户自己
                 if (onlineUsernames.contains(users.get(i).getUsername())) {  //在线
                     radioList.add(i, new JRadioButton(users.get(i).getUsername() + "(online)", false));
                 } else {
