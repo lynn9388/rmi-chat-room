@@ -63,7 +63,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         for (Map.Entry entry : onlineClients.entrySet()) {
             Client client = (Client) entry.getValue();
             if (!entry.getKey().equals(user.getUsername())) {
-                client.addOnlineUser(user);
+                try {
+                    client.addOnlineUser(user);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -125,12 +129,12 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
 
         for (Client client : onlineClients.values()) {
-            try {
-                for (String username : offlineUsernames) {
+            for (String username : offlineUsernames) {
+                try {
                     client.setUserOffline(username);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
-            } catch (RemoteException e) {
-                e.printStackTrace();
             }
         }
     }
