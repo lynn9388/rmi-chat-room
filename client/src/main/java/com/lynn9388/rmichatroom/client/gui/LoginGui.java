@@ -18,7 +18,6 @@ package com.lynn9388.rmichatroom.client.gui;
 
 import com.lynn9388.rmichatroom.client.Client;
 import com.lynn9388.rmichatroom.client.rmi.ClientImpl;
-import com.lynn9388.rmichatroom.rmi.Conversation;
 import com.lynn9388.rmichatroom.rmi.Message;
 import com.lynn9388.rmichatroom.rmi.Server;
 import com.lynn9388.rmichatroom.rmi.User;
@@ -104,14 +103,12 @@ public class LoginGui extends JFrame implements java.awt.event.ActionListener {
 
                     mainGui.updateUsers(server.getRegisteredUsers(), server.getOnlineUsernames());
 
-                    Conversation conversation = server.getConversation(username);
-                    if (conversation != null) {
-                        List<Message> messages = conversation.getMessages();
+                    List<Message> messages = server.getMissedMessages(username);
+                    if (messages != null) {
                         for (Message message : messages) {
                             mainGui.appendMessage(message.getFrom(), message.getDate(), message.getContent());
                         }
                     }
-
 
                     new Timer().schedule(new TimerTask() {
                         @Override

@@ -17,7 +17,7 @@
 package com.lynn9388.rmichatroom.server.rmi;
 
 import com.lynn9388.rmichatroom.rmi.Client;
-import com.lynn9388.rmichatroom.rmi.Conversation;
+import com.lynn9388.rmichatroom.rmi.Message;
 import com.lynn9388.rmichatroom.rmi.Server;
 import com.lynn9388.rmichatroom.rmi.User;
 
@@ -36,13 +36,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     private Map<String, User> registeredUsers;
     private Map<String, Date> lastHeartbeatTimes;
     private Map<String, Client> onlineClients;
-    private Map<String, Conversation> conversations;
+    private Map<String, List<Message>> missedMessages;
 
     public ServerImpl() throws RemoteException {
         registeredUsers = new ConcurrentHashMap<>();
         lastHeartbeatTimes = new ConcurrentHashMap<>();
         onlineClients = new ConcurrentHashMap<>();
-        conversations = new ConcurrentHashMap<>();
+        missedMessages = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -87,21 +87,20 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     @Override
     public void recordMessage(String from, String to, Date date, String message) throws RemoteException {
-        if (!conversations.containsKey(to)) {
-            conversations.put(to, new Conversation());
+        if (!missedMessages.containsKey(to)) {
+            missedMessages.put(to, new ArrayList<>());
         }
-        Conversation conversation = conversations.get(to);
-        conversation.addMessage(from, to, date, message);
+        missedMessages.get(to).add(new Message(from, to, date, message));
     }
 
     @Override
-    public Conversation getConversation(String username) throws RemoteException {
-        return conversations.get(username);
+    public List<Message> getMissedMessages(String username) throws RemoteException {
+        return missedMessages.get(username);
     }
 
     @Override
-    public void removeConversation(String username) throws RemoteException {
-        conversations.remove(username);
+    public void removeMissedMessages(String username) throws RemoteException {
+        missedMessages.remove(username);
     }
 
     /**

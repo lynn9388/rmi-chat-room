@@ -49,7 +49,20 @@ public interface Server extends Remote {
 
     void recordMessage(String from, String to, Date date, String message) throws RemoteException;
 
-    Conversation getConversation(String username) throws RemoteException;
+    /**
+     * Return messages that others send when the user is not online
+     *
+     * @param username the username of these messages sent to
+     * @return the message sent to user, or null if no messages belongs to the user
+     * @throws RemoteException
+     */
+    List<Message> getMissedMessages(String username) throws RemoteException;
 
-    void removeConversation(String username) throws RemoteException;
+    /**
+     * Remove all messages sent to the user
+     *
+     * @param username the username of these messages sent to
+     * @throws RemoteException
+     */
+    void removeMissedMessages(String username) throws RemoteException;
 }
