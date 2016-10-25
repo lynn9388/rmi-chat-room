@@ -19,14 +19,13 @@ package com.lynn9388.rmichatroom.rmi;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    private static final long serialVersionUID = 148606460530002054L;
-
+    private static final long serialVersionUID = 8116975872176331171L;
     private String username;
     private String ip;
-    private String port;
+    private int port;
     private String remoteName;
 
-    public User(String username, String ip, String port, String remoteName) {
+    public User(String username, String ip, int port, String remoteName) {
         this.username = username;
         this.ip = ip;
         this.port = port;
@@ -41,7 +40,7 @@ public class User implements Serializable {
         return ip;
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 
