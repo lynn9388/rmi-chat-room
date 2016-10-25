@@ -31,12 +31,12 @@ public interface Client extends Remote {
     void addOnlineUser(User onlineUser) throws RemoteException;
 
     /**
-     * Add a new offline user
+     * Set a user to offline
      *
-     * @param offlineUser the user just offline
+     * @param offlineUsername the username of the user just leave
      * @throws RemoteException
      */
-    void addOfflineUser(User offlineUser) throws RemoteException;
+    void setUserOffline(String offlineUsername) throws RemoteException;
 
     /**
      * Update all users' information of the client

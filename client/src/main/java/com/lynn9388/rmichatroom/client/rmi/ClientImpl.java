@@ -34,7 +34,7 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
     }
 
     @Override
-    public void addOfflineUser(User offlineUser) throws RemoteException {
+    public void setUserOffline(String offlineUsername) throws RemoteException {
 
     }
 
