@@ -16,7 +16,9 @@
 
 package com.lynn9388.rmichatroom.client.gui;
 
+import com.lynn9388.rmichatroom.rmi.Client;
 import com.lynn9388.rmichatroom.rmi.Message;
+import com.lynn9388.rmichatroom.rmi.Server;
 import com.lynn9388.rmichatroom.rmi.User;
 
 import javax.swing.AbstractButton;
@@ -37,6 +39,10 @@ import java.awt.Label;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -50,12 +56,14 @@ public class MainGui extends JFrame implements ActionListener {
     private JTextArea messageEditArea;
     private Button sendButton;
 
+    private Server server;
     private String username;
     private String sendToUsername;
     private List<User> registeredUsers;
     private List<String> onlineUsernames;
 
-    public MainGui(String username) {
+    public MainGui(Server server, String username) {
+        this.server = server;
         this.username = username;
     }
 
@@ -237,17 +245,47 @@ public class MainGui extends JFrame implements ActionListener {
     }
 
     /**
-     * @param username name of user receving message
-     * @param date     time
-     * @param message
+     * Send message to another user, if the user is offline or send failed,
+     * the message will send to server
+     *
+     * @param date     the date of the message
+     * @param message  the content of the message
      */
-    public void sendMessage(String username, Date date, String message) {
+    public void sendMessage(Date date, String message) {
+        boolean isReceiverOnline = false;
+        for (String onlineUsername : onlineUsernames) {
+            if (onlineUsername.equals(sendToUsername)) {
+                isReceiverOnline = true;
+                for (User user : registeredUsers) {
+                    if (sendToUsername.equals(user.getUsername())) {
+                        try {
+                            Registry registry = LocateRegistry.getRegistry(user.getIp(), user.getPort());
+                            Client client = (Client) registry.lookup(user.getRemoteName());
+                            client.receiveMessage(username, date, message);
+                        } catch (NotBoundException | RemoteException e) {
+                            try {
+                                server.recordMessage(username, sendToUsername, date, message);
+                            } catch (RemoteException e1) {
+                                e1.printStackTrace();
+                            }
+                            e.printStackTrace();
+                        }
+                        break;
+                    }
+                }
+                break;
+            }
+        }
 
+        if (!isReceiverOnline) {
+            try {
+                server.recordMessage(username, sendToUsername, date, message);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    /**
-     * send按钮，点击事件监听
-     */
     class sendActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             String message = messageEditArea.getText().toString();
@@ -255,12 +293,11 @@ public class MainGui extends JFrame implements ActionListener {
                 if (sendToUsername != null && !sendToUsername.isEmpty()) {
                     appendMessage(new Message(username, sendToUsername, new Date(), message));
                     messageEditArea.setText("");
-                    sendMessage(username, new Date(), message);
+                    sendMessage(new Date(), message);
                 } else {
                     JOptionPane.showMessageDialog(MainGui.this, "Please choose a user to send the message.");
                 }
             }
         }
     }
-
 }

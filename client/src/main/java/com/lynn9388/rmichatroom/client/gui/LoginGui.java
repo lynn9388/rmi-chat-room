@@ -96,7 +96,7 @@ public class LoginGui extends JFrame implements java.awt.event.ActionListener {
                     dispose(); // Close login window
 
                     server.register(new User(username, ip, port, username));
-                    MainGui mainGui = new MainGui(username);
+                    MainGui mainGui = new MainGui(server, username);
                     client.setMainGui(mainGui);
                     mainGui.createAndShow();
 
@@ -105,7 +105,7 @@ public class LoginGui extends JFrame implements java.awt.event.ActionListener {
                     List<Message> messages = server.getMissedMessages(username);
                     if (messages != null) {
                         for (Message message : messages) {
-                            mainGui.appendMessage(message.getFrom(), message.getDate(), message.getContent());
+                            mainGui.appendMessage(message);
                         }
                     }
 
