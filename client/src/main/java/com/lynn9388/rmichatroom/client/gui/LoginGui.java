@@ -93,7 +93,7 @@ public class LoginGui extends JFrame implements java.awt.event.ActionListener {
                     dispose(); // Close login window
 
                     server.register(new User(username, ip, port, username));
-                    MainGui mainGui = new MainGui();
+                    MainGui mainGui = new MainGui(username);
                     SwingUtilities.invokeLater(() -> mainGui.createAndShow());
                     mainGui.updateUsers(server.getRegisteredUsers(), server.getOnlineUsernames());
                 } else {
