@@ -234,9 +234,7 @@ public class MainGui extends JFrame implements ActionListener {
      * @param message  接收到的信息
      */
     public void appendMessage(String username, Date date, String message) {
-
         showMessage.append(username + "(" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date) + ")：\n" + "      " + message + "\n");
-
     }
 
     /**

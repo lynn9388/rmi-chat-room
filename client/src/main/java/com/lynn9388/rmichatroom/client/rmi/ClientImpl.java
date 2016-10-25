@@ -28,7 +28,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
-import java.util.List;
 
 public class ClientImpl extends UnicastRemoteObject implements Client {
     private Server server;
@@ -56,12 +55,8 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
     }
 
     @Override
-    public void updateUsers(List<User> users, List<String> onlineUsernames) throws RemoteException {
-        mainGui.updateUsers(users, onlineUsernames);
-    }
-
-    @Override
-    public void receiveMessage(Date date, String message) throws RemoteException {
+    public void receiveMessage(String username, Date date, String message) throws RemoteException {
+        mainGui.appendMessage(username, date, message);
     }
 
     public Server getServer() {

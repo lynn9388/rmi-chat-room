@@ -19,7 +19,6 @@ package com.lynn9388.rmichatroom.rmi;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Date;
-import java.util.List;
 
 public interface Client extends Remote {
     int PORT = 1100;
@@ -40,14 +39,5 @@ public interface Client extends Remote {
      */
     void setUserOffline(String offlineUsername) throws RemoteException;
 
-    /**
-     * Update all users' information of the client
-     *
-     * @param users           all registered users
-     * @param onlineUsernames all usernames of online users
-     * @throws RemoteException
-     */
-    void updateUsers(List<User> users, List<String> onlineUsernames) throws RemoteException;
-
-    void receiveMessage(Date date, String message) throws RemoteException;
+    void receiveMessage(String username, Date date, String message) throws RemoteException;
 }
