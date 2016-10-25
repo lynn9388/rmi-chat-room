@@ -82,6 +82,8 @@ public class LoginGui extends JFrame implements java.awt.event.ActionListener {
                     dispose(); // Close login window
 
                     SwingUtilities.invokeLater(() -> new MainGui().createAndShow());
+                } else {
+                    JOptionPane.showMessageDialog(this, "Can't connect to server.");
                 }
             } catch (RemoteException e1) {
                 e1.printStackTrace();
