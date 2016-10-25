@@ -16,12 +16,12 @@
 
 package com.lynn9388.rmichatroom.client;
 
-import com.lynn9388.rmichatroom.client.gui.LoginGUI;
+import com.lynn9388.rmichatroom.client.gui.LoginGui;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 
 public class Client {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new LoginGUI().createAndShow());
+        SwingUtilities.invokeLater(() -> new LoginGui().createAndShow());
     }
 }
