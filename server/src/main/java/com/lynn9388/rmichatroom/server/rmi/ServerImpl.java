@@ -87,16 +87,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     @Override
     public void recordMessage(String from, String to, Date date, String message) throws RemoteException {
-        String key = getConversationKey(from, to);
-        if (!conversations.containsKey(key)) {
-            conversations.put(key, new Conversation());
+        if (!conversations.containsKey(to)) {
+            conversations.put(to, new Conversation());
         }
-        Conversation conversation = conversations.get(key);
+        Conversation conversation = conversations.get(to);
         conversation.addMessage(from, to, date, message);
-    }
-
-    private String getConversationKey(String from, String to) {
-        return from + " & " + to;
     }
 
     /**
