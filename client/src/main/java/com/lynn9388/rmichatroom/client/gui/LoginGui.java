@@ -88,7 +88,7 @@ public class LoginGui extends JFrame implements java.awt.event.ActionListener {
                 int port = com.lynn9388.rmichatroom.rmi.Client.PORT;
                 if (server != null && ip != null) {
                     Registry registry = LocateRegistry.createRegistry(port);
-                    registry.rebind(com.lynn9388.rmichatroom.rmi.Server.NAME, client);
+                    registry.rebind(username, client);
 
                     dispose(); // Close login window
 
