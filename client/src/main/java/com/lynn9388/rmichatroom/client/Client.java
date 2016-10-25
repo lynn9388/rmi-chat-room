@@ -16,28 +16,12 @@
 
 package com.lynn9388.rmichatroom.client;
 
-import com.lynn9388.rmichatroom.rmi.Server;
+import com.lynn9388.rmichatroom.client.gui.LoginGUI;
 
-import java.io.IOException;
-import java.rmi.NotBoundException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
+import javax.swing.*;
 
 public class Client {
-    private static final String SERVER_IP = "";
-    private static final int SERVER_PORT = 1099;
-
     public static void main(String[] args) {
-        try {
-            Registry registry = LocateRegistry.getRegistry(SERVER_IP, SERVER_PORT);
-            Server server = (Server) registry.lookup(Server.NAME);
-            System.out.println("Bound success!");
-        } catch (NotBoundException e) {
-            System.err.println("Bound failed!");
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        SwingUtilities.invokeLater(() -> new LoginGUI().createAndShow());
     }
 }
