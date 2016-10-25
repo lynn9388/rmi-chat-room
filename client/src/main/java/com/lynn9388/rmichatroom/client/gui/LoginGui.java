@@ -18,6 +18,8 @@ package com.lynn9388.rmichatroom.client.gui;
 
 import com.lynn9388.rmichatroom.client.Client;
 import com.lynn9388.rmichatroom.client.rmi.ClientImpl;
+import com.lynn9388.rmichatroom.rmi.Conversation;
+import com.lynn9388.rmichatroom.rmi.Message;
 import com.lynn9388.rmichatroom.rmi.Server;
 import com.lynn9388.rmichatroom.rmi.User;
 
@@ -35,6 +37,7 @@ import java.awt.Toolkit;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -98,7 +101,17 @@ public class LoginGui extends JFrame implements java.awt.event.ActionListener {
                     MainGui mainGui = new MainGui(username);
                     client.setMainGui(mainGui);
                     SwingUtilities.invokeLater(() -> mainGui.createAndShow());
+
                     mainGui.updateUsers(server.getRegisteredUsers(), server.getOnlineUsernames());
+
+                    Conversation conversation = server.getConversation(username);
+                    if (conversation != null) {
+                        List<Message> messages = conversation.getMessages();
+                        for (Message message : messages) {
+                            mainGui.appendMessage(message.getFrom(), message.getDate(), message.getContent());
+                        }
+                    }
+
 
                     new Timer().schedule(new TimerTask() {
                         @Override
