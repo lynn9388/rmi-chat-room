@@ -34,16 +34,12 @@ import java.util.List;
  */
 public class MainGUI extends JFrame implements ActionListener {
     private JPanel contentPane;
-    //    private JComboBox comboBox;
     private JTextArea showMessage;//信息显示区域
     private JTextArea sendMessage;//信息输入区域
     private Button send;
     private ButtonGroup chooseUser;
     private JPanel chooseUserPanel;
     private JScrollPane chooseUserScroll;
-
-    private boolean updateMessage = false;
-    private Thread updateMessageTh;
 
     public MainGUI() {
         setTitle("ChatRoom");
@@ -58,7 +54,6 @@ public class MainGUI extends JFrame implements ActionListener {
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
         contentPane.setLayout(null);
-
 
         //标签
         Label labelForShow = new Label("Choose User:");
@@ -116,7 +111,6 @@ public class MainGUI extends JFrame implements ActionListener {
         chooseUserScroll.setViewportView(chooseUserPanel);
         contentPane.add(chooseUserScroll);
 
-
         //标签
         Label labelForSend = new Label("text message:");
         labelForSend.setBounds(130, 425, 100, 20);
@@ -136,14 +130,12 @@ public class MainGUI extends JFrame implements ActionListener {
         contentPane.add(scroll2);
 
         //发送按钮，默认按enter键也会发送
-
         send = new Button("Send");
         send.addActionListener(new sendActionListener());
         send.setBounds(520, 510, 75, 35);
         contentPane.add(send);
 
         this.setVisible(true);
-
 
     }
 
