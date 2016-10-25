@@ -16,7 +16,10 @@
 
 package com.lynn9388.rmichatroom.client.gui;
 
+import com.lynn9388.rmichatroom.client.Client;
 import com.lynn9388.rmichatroom.client.rmi.ClientImpl;
+import com.lynn9388.rmichatroom.rmi.Server;
+import com.lynn9388.rmichatroom.rmi.User;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -30,6 +33,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 public class LoginGui extends JFrame implements java.awt.event.ActionListener {
     private JTextField userName;
@@ -77,11 +82,20 @@ public class LoginGui extends JFrame implements java.awt.event.ActionListener {
         } else {
             try {
                 ClientImpl client = new ClientImpl();
+                Server server = client.getServer();
 
-                if (client.isConnectedToServer()) {
+                String ip = Client.getConnectedIp(Server.IP, Server.PORT);
+                int port = com.lynn9388.rmichatroom.rmi.Client.PORT;
+                if (server != null && ip != null) {
+                    Registry registry = LocateRegistry.createRegistry(port);
+                    registry.rebind(com.lynn9388.rmichatroom.rmi.Server.NAME, client);
+
                     dispose(); // Close login window
 
-                    SwingUtilities.invokeLater(() -> new MainGui().createAndShow());
+                    server.register(new User(username, ip, port, username));
+                    MainGui mainGui = new MainGui();
+                    SwingUtilities.invokeLater(() -> mainGui.createAndShow());
+                    mainGui.updateUsers(server.getRegisteredUsers(), server.getOnlineUsernames());
                 } else {
                     JOptionPane.showMessageDialog(this, "Can't connect to server.");
                 }

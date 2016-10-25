@@ -61,10 +61,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
         for (Map.Entry entry : onlineClients.entrySet()) {
             Client client = (Client) entry.getValue();
-            if (entry.getKey().equals(user.getUsername())) {
-                client.updateUsers(new ArrayList<>(registeredUsers.values()),
-                        new ArrayList<>(onlineClients.keySet()));
-            } else {
+            if (!entry.getKey().equals(user.getUsername())) {
                 client.addOnlineUser(user);
             }
         }

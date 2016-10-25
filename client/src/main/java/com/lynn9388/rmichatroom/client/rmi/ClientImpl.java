@@ -63,7 +63,7 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 
     }
 
-    public boolean isConnectedToServer() {
-        return server != null;
+    public Server getServer() {
+        return server;
     }
 }
