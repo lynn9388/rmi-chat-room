@@ -17,6 +17,7 @@
 package com.lynn9388.rmichatroom.client.rmi;
 
 import com.lynn9388.rmichatroom.rmi.Client;
+import com.lynn9388.rmichatroom.rmi.User;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -24,11 +25,21 @@ import java.util.Date;
 import java.util.List;
 
 public class ClientImpl extends UnicastRemoteObject implements Client {
-    protected ClientImpl() throws RemoteException {
+    public ClientImpl() throws RemoteException {
     }
 
     @Override
-    public void updateUsernames(List<String> usernames) throws RemoteException {
+    public void addOnlineUser(User onlineUser) throws RemoteException {
+
+    }
+
+    @Override
+    public void addOfflineUser(User offlineUser) throws RemoteException {
+
+    }
+
+    @Override
+    public void updateUsers(List<User> users, List<String> onlineUsernames) throws RemoteException {
 
     }
 

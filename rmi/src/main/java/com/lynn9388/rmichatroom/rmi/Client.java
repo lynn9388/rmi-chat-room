@@ -22,7 +22,30 @@ import java.util.Date;
 import java.util.List;
 
 public interface Client extends Remote {
-    void updateUsernames(List<String> usernames) throws RemoteException;
+    /**
+     * Add a new online user
+     *
+     * @param onlineUser the user just online, and the user may have registered before
+     * @throws RemoteException
+     */
+    void addOnlineUser(User onlineUser) throws RemoteException;
+
+    /**
+     * Add a new offline user
+     *
+     * @param offlineUser the user just offline
+     * @throws RemoteException
+     */
+    void addOfflineUser(User offlineUser) throws RemoteException;
+
+    /**
+     * Update all users' information of the client
+     *
+     * @param users           all registered users
+     * @param onlineUsernames all usernames of online users
+     * @throws RemoteException
+     */
+    void updateUsers(List<User> users, List<String> onlineUsernames) throws RemoteException;
 
     void receiveMessage(Date date, String message) throws RemoteException;
 }
