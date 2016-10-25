@@ -39,12 +39,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
-
-/**
- * Created by ZhangJing on 16/10/24.
- * <p>
- * 客户端界面
- */
 public class MainGui extends JFrame implements ActionListener {
     private JPanel contentPane;
     private JTextArea showMessage;//信息显示区域
@@ -188,7 +182,7 @@ public class MainGui extends JFrame implements ActionListener {
      *
      * @param offlineUsername the username of the user just leave
      */
-    void setUserOffline(String offlineUsername) {
+    public void setUserOffline(String offlineUsername) {
 
         for (Enumeration<AbstractButton> e = chooseUser.getElements(); e.hasMoreElements(); ) {
             AbstractButton ab = e.nextElement();

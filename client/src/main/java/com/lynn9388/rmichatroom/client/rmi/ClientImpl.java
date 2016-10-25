@@ -16,6 +16,7 @@
 
 package com.lynn9388.rmichatroom.client.rmi;
 
+import com.lynn9388.rmichatroom.client.gui.MainGui;
 import com.lynn9388.rmichatroom.rmi.Client;
 import com.lynn9388.rmichatroom.rmi.Server;
 import com.lynn9388.rmichatroom.rmi.User;
@@ -31,6 +32,7 @@ import java.util.List;
 
 public class ClientImpl extends UnicastRemoteObject implements Client {
     private Server server;
+    private MainGui mainGui;
 
     public ClientImpl() throws RemoteException {
         try {
@@ -45,25 +47,28 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 
     @Override
     public void addOnlineUser(User onlineUser) throws RemoteException {
-
+        mainGui.addOnlineUser(onlineUser);
     }
 
     @Override
     public void setUserOffline(String offlineUsername) throws RemoteException {
-
+        mainGui.setUserOffline(offlineUsername);
     }
 
     @Override
     public void updateUsers(List<User> users, List<String> onlineUsernames) throws RemoteException {
-
+        mainGui.updateUsers(users, onlineUsernames);
     }
 
     @Override
     public void receiveMessage(Date date, String message) throws RemoteException {
-
     }
 
     public Server getServer() {
         return server;
+    }
+
+    public void setMainGui(MainGui mainGui) {
+        this.mainGui = mainGui;
     }
 }
