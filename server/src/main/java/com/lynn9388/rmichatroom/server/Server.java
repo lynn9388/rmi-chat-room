@@ -21,6 +21,8 @@ import com.lynn9388.rmichatroom.server.rmi.ServerImpl;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Server {
     public static final int PORT = 1099;
@@ -32,6 +34,13 @@ public class Server {
             Registry registry = LocateRegistry.createRegistry(PORT);
             registry.rebind(com.lynn9388.rmichatroom.rmi.Server.NAME, stub);
             System.out.println("Bound success!");
+
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    ((ServerImpl) stub).checkClientsStatus();
+                }
+            }, 0, 10000);
         } catch (RemoteException e) {
             System.err.print("Bound failed!");
             e.printStackTrace();

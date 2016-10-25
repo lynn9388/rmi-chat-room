@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerImpl extends UnicastRemoteObject implements Server {
@@ -103,13 +102,29 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return from + " & " + to;
     }
 
+    /**
+     * Check clients' status and update users' information for online users
+     */
     public void checkClientsStatus() {
         Date now = new Date();
-        Set<Map.Entry<String, Date>> set = lastHeartbeatTimes.entrySet();
-        for (Map.Entry entry : set) {
+        List<String> offlineUsernames = new ArrayList<>();
+        for (Map.Entry entry : lastHeartbeatTimes.entrySet()) {
             if (now.getTime() - ((Date) entry.getValue()).getTime() > Server.HEARTBEAT_RATE * 10) {
-                set.remove(entry);
                 onlineClients.remove(entry.getKey());
+            }
+        }
+
+        for (String username : offlineUsernames) {
+            lastHeartbeatTimes.remove(username);
+        }
+
+        for (Client client : onlineClients.values()) {
+            try {
+                for (String username : offlineUsernames) {
+                    client.setUserOffline(username);
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
         }
     }
