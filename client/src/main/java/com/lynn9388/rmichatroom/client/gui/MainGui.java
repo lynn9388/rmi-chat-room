@@ -49,6 +49,7 @@ public class MainGui extends JFrame implements ActionListener {
     private JScrollPane chooseUserScroll;
     private String username;
     private List<User> allRegisteredUsers;
+    private List<String> onlineUsers;
 
     public MainGui(String username) {
         this.username = username;
@@ -166,6 +167,7 @@ public class MainGui extends JFrame implements ActionListener {
             readd.addActionListener(this);
             chooseUserScroll.updateUI();
             System.out.println(onlineUser.getUsername() + "已经存在,上线了");
+            addToOnlineUserList(onlineUser.getUsername()); //添加到在线用户列表
         } else {                      //没有注册，直接添加一个在线用户
             JRadioButton readd = new JRadioButton(onlineUser.getUsername() + "(online)");
             chooseUser.add(readd);
@@ -173,6 +175,7 @@ public class MainGui extends JFrame implements ActionListener {
             readd.addActionListener(this);
             chooseUserScroll.updateUI();
             System.out.println("直接添加上线用户" + onlineUser.getUsername());
+            addToRegisterList(onlineUser); //之前没有注册，加入到注册list
         }
 
     }
@@ -198,6 +201,8 @@ public class MainGui extends JFrame implements ActionListener {
                 System.out.println(offlineUsername + "下线了");
             }
         }
+        //在onlineuser列表中删除下线的用户
+        deleteFromOnlineUserList(offlineUsername);
     }
 
     /**
@@ -208,6 +213,7 @@ public class MainGui extends JFrame implements ActionListener {
      */
     public void updateUsers(List<User> users, List<String> onlineUsernames) {
         allRegisteredUsers = users;
+        onlineUsers = onlineUsernames;
         int num = users.size();
         List<JRadioButton> radioList = new ArrayList<>();
         chooseUserPanel.removeAll();
@@ -247,6 +253,33 @@ public class MainGui extends JFrame implements ActionListener {
     }
 
     /**
+     *
+     * @param name 下线的用户，从在线用户列表中删除
+     */
+    public void deleteFromOnlineUserList(String name) {
+        for (int i = 0; i < onlineUsers.size(); i++) {
+            if (onlineUsers.get(i).equals(name)) {
+                onlineUsers.remove(i);
+            }
+            break;
+        }
+    }
+
+    /**
+     * @param name 上线的用户，添加到在线用户列表
+     */
+    public void addToOnlineUserList(String name) {
+        onlineUsers.add(name);
+    }
+
+    /**
+     * @param user 新注册的用户，添加到register列表
+     */
+    public void addToRegisterList(User user) {
+        allRegisteredUsers.add(user);
+    }
+
+    /**
      * send按钮，点击事件监听
      */
     class sendActionListener implements ActionListener {
@@ -255,6 +288,7 @@ public class MainGui extends JFrame implements ActionListener {
 
             showMessage.append(" 我(" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + ")：\n" + "      " + message + "\n");
             sendMessage.setText("");//发送后清空输入框
+            sendMessage(username, new Date(), message);
             System.out.println(message);
         }
     }
