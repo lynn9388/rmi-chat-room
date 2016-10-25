@@ -16,9 +16,18 @@
 
 package com.lynn9388.rmichatroom.client.gui;
 
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.Button;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Label;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
@@ -26,14 +35,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
-/**
- * Created by ZhangJing on 16/10/24.
- * <p>
- * 客户端界面
- */
-public class MainGUI extends JFrame implements ActionListener {
-    private JPanel contentPane;
+public class MainGui extends JFrame implements ActionListener {
+    private JPanel mainPanel;
     private JTextArea showMessage;//信息显示区域
     private JTextArea sendMessage;//信息输入区域
     private Button send;
@@ -41,24 +44,24 @@ public class MainGUI extends JFrame implements ActionListener {
     private JPanel chooseUserPanel;
     private JScrollPane chooseUserScroll;
 
-    public MainGUI() {
+    public void createAndShow() {
         setTitle("ChatRoom");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 619, 650);
         setResizable(false);
+        setBounds(100, 100, 619, 650);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension frameSize = getSize();
+        Dimension frameSize = this.getSize();
         setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        setContentPane(contentPane);
-        contentPane.setLayout(null);
+        mainPanel = new JPanel();
+        mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setContentPane(mainPanel);
+        mainPanel.setLayout(null);
 
         //标签
         Label labelForShow = new Label("Choose User:");
         labelForShow.setBounds(10, 5, 100, 17);
-        contentPane.add(labelForShow);
+        mainPanel.add(labelForShow);
 
         //消息显示区域,自动添加滚动条
         showMessage = new JTextArea();
@@ -72,12 +75,12 @@ public class MainGUI extends JFrame implements ActionListener {
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scroll.setBounds(10, 25, 595, 390);
         scroll.setViewportView(showMessage);
-        contentPane.add(scroll);
+        mainPanel.add(scroll);
 
         //标签
         Label labelForCombo = new Label("Choose User:");
         labelForCombo.setBounds(10, 425, 100, 20);
-        contentPane.add(labelForCombo);
+        mainPanel.add(labelForCombo);
 
         //选择用户
         chooseUserPanel = new JPanel();
@@ -85,36 +88,14 @@ public class MainGUI extends JFrame implements ActionListener {
         //设置垂直滚动条自动出现
         chooseUserScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-/* 测试
-       chooseUserPanel .setLayout(new GridLayout(0,1));
-        chooseUser = new ButtonGroup();
-        JRadioButton b1 = new JRadioButton("ceshi",false);
-        JRadioButton b2 = new JRadioButton("ceshi2",false);
-        JRadioButton b3 = new JRadioButton("ceshi3",false);
-        JRadioButton b4 = new JRadioButton("ceshi3",false);
-        JRadioButton b5 = new JRadioButton("ceshi4",false);
-        b1.addActionListener(this);
-        chooseUser.add(b5);
-        chooseUser.add(b4);
-        chooseUser.add(b3);
-        chooseUser.add(b1);
-        chooseUser.add(b2);
-
-        chooseUserPanel.add(b1);
-        chooseUserPanel.add(b2);
-        chooseUserPanel.add(b3);
-        chooseUserPanel.add(b4);
-        chooseUserPanel.add(b5);
-*/
-
         chooseUserScroll.setBounds(10, 450, 100, 150);
         chooseUserScroll.setViewportView(chooseUserPanel);
-        contentPane.add(chooseUserScroll);
+        mainPanel.add(chooseUserScroll);
 
         //标签
         Label labelForSend = new Label("text message:");
         labelForSend.setBounds(130, 425, 100, 20);
-        contentPane.add(labelForSend);
+        mainPanel.add(labelForSend);
 
         //消息输入区
         sendMessage = new JTextArea();
@@ -127,39 +108,20 @@ public class MainGUI extends JFrame implements ActionListener {
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scroll2.setBounds(130, 445, 370, 170);
         scroll2.setViewportView(sendMessage);
-        contentPane.add(scroll2);
+        mainPanel.add(scroll2);
 
         //发送按钮，默认按enter键也会发送
         send = new Button("Send");
         send.addActionListener(new sendActionListener());
         send.setBounds(520, 510, 75, 35);
-        contentPane.add(send);
+        mainPanel.add(send);
 
-        this.setVisible(true);
-
-    }
-
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-
-            MainGUI frame = new MainGUI();
-            frame.setVisible(true);
-            frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
+        setVisible(true);
     }
 
     /**
      * 更新用户列表，重绘
+     *
      * @param usernames
      */
     public void updateUsernames(List<String> usernames) {
@@ -177,20 +139,19 @@ public class MainGUI extends JFrame implements ActionListener {
         }
         chooseUserScroll.setBounds(10, 450, 100, 150);
         chooseUserScroll.setViewportView(chooseUserPanel);
-        contentPane.add(chooseUserScroll);
+        mainPanel.add(chooseUserScroll);
         chooseUserScroll.repaint();
     }
 
     /**
      * 接收用户在某时刻发送到的信息
+     *
      * @param username 用户名
      * @param date     日期
      * @param message  接收到的信息
      */
     public void appendMessage(String username, Date date, String message) {
-
         showMessage.append(username + "(" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date) + ")：\n" + "      " + message + "\n");
-
     }
 
     /**
@@ -224,6 +185,4 @@ public class MainGUI extends JFrame implements ActionListener {
             System.out.println(message);
         }
     }
-
-
 }
