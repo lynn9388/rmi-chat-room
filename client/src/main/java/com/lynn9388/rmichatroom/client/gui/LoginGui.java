@@ -28,7 +28,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import java.awt.Dimension;
@@ -99,7 +98,7 @@ public class LoginGui extends JFrame implements java.awt.event.ActionListener {
                     server.register(new User(username, ip, port, username));
                     MainGui mainGui = new MainGui(username);
                     client.setMainGui(mainGui);
-                    SwingUtilities.invokeLater(() -> mainGui.createAndShow());
+                    mainGui.createAndShow();
 
                     mainGui.updateUsers(server.getRegisteredUsers(), server.getOnlineUsernames());
 
