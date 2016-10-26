@@ -34,6 +34,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.Toolkit;
@@ -89,6 +90,7 @@ public class MainGui extends JFrame implements ActionListener {
         // Message display area, add scroll bar
         historyArea = new JTextArea();
         historyArea.setEditable(false);
+        historyArea.setFont(new Font("Serig", Font.PLAIN, 16));
         JScrollPane historyScrollPane = new JScrollPane(historyArea);
         historyScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         historyScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -116,6 +118,7 @@ public class MainGui extends JFrame implements ActionListener {
         // Message edit area
         messageEditArea = new JTextArea();
         messageEditArea.setLineWrap(true);
+        messageEditArea.setFont(new Font("Serig", Font.PLAIN, 16));
         JScrollPane scrollPane1 = new JScrollPane(messageEditArea);
         scrollPane1.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane1.setBounds(130, 445, 370, 170);
@@ -229,7 +232,10 @@ public class MainGui extends JFrame implements ActionListener {
         } else {
             builder.append("From " + message.getFrom());
         }
-        builder.append("      (" + formatDate + ")\n" + "      " + message.getContent() + "\n\n");
+        builder.append("      (" + formatDate
+                + ")\n---------------------------------------------------\n"
+                + message.getContent()
+                + "\n\n");
         historyArea.append(builder.toString());
     }
 
