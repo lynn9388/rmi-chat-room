@@ -68,7 +68,7 @@ public class MainGui extends JFrame implements ActionListener {
     }
 
     public void createAndShow() {
-        setTitle("Chat Room");
+        setTitle("Chat Room(" + username + ")");
         setResizable(false);
         setBounds(100, 100, 619, 650);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
