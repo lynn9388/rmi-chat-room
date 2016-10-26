@@ -109,6 +109,7 @@ public class LoginGui extends JFrame implements java.awt.event.ActionListener {
                     mainGui.updateUsers(server.getRegisteredUsers(), server.getOnlineUsernames());
 
                     List<Message> messages = server.getMissedMessages(username);
+                    server.removeMissedMessages(username);
                     if (messages != null) {
                         for (Message message : messages) {
                             mainGui.appendMessage(message);
