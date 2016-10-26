@@ -154,7 +154,6 @@ public class MainGui extends JFrame implements ActionListener {
         if (isRegistered) {
             abstractButton.setForeground(Color.GREEN);
             chooseUserPanel.updateUI();
-            onlineUsernames.add(onlineUser.getUsername());
         } else {
             JRadioButton radioButton = new JRadioButton(onlineUser.getUsername(), false);
             radioButton.setForeground(Color.GREEN);
@@ -164,6 +163,7 @@ public class MainGui extends JFrame implements ActionListener {
             chooseUserScrollPane.updateUI();
             registeredUsers.add(onlineUser);
         }
+        onlineUsernames.add(onlineUser.getUsername());
     }
 
     /**
@@ -229,7 +229,7 @@ public class MainGui extends JFrame implements ActionListener {
         } else {
             builder.append("From " + message.getFrom());
         }
-        builder.append("(" + formatDate + ")：\n" + "      " + message.getContent() + "\n\n");
+        builder.append("      (" + formatDate + ")\n" + "      " + message.getContent() + "\n\n");
         historyArea.append(builder.toString());
     }
 
@@ -241,7 +241,7 @@ public class MainGui extends JFrame implements ActionListener {
      * @param message  the content of the message
      */
     public void appendMessage(String username, Date date, String message) {
-        appendMessage(new Message(this.username, username, date, message));
+        appendMessage(new Message(username, this.username, date, message));
     }
 
     /**
